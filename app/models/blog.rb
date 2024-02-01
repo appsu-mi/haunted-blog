@@ -10,12 +10,16 @@ class Blog < ApplicationRecord
   scope :published, -> { where('secret = FALSE') }
 
   scope :search, lambda { |term|
-    where("title LIKE '%#{term}%' OR content LIKE '%#{term}%'")
+    where('title LIKE ? OR content LIKE ?', "%#{term}%", "%#{term}%")
   }
 
   scope :default_order, -> { order(id: :desc) }
 
   def owned_by?(target_user)
     user == target_user
+  end
+
+  def filter_premium(params)
+    user.premium? ? params : params.delete_if { |key, _value| key == 'random_eyecatch' }
   end
 end
