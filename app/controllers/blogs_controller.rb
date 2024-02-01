@@ -51,8 +51,8 @@ class BlogsController < ApplicationController
   def set_permitted_blog
     @blog = Blog.find(params[:id])
     return unless @blog.secret
-    raise ActiveRecord::RecordNotFound, "Couldn't find Blog with 'id'=#{params[:id]}" if !user_signed_in?
-    raise ActiveRecord::RecordNotFound, "Couldn't find Blog with 'id'=#{params[:id]}" unless @blog.user == current_user
+    raise ActiveRecord::RecordNotFound, "Couldn't find Blog with 'id'=#{@blog.id}" if !user_signed_in?
+    raise ActiveRecord::RecordNotFound, "Couldn't find Blog with 'id'=#{@blog.id}" unless @blog.user == current_user
   end
 
   def blog_params
