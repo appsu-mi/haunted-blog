@@ -3,14 +3,15 @@
 class BlogsController < ApplicationController
   skip_before_action :authenticate_user!, only: %i[index show]
 
-  before_action :set_permitted_blog, only: :show
   before_action :set_my_blog, only: %i[edit update destroy]
 
   def index
     @blogs = Blog.search(params[:term]).published.default_order
   end
 
-  def show; end
+  def show
+    @blog = Blog.find(params[:id]).confirm_browsable(current_user)
+  end
 
   def new
     @blog = Blog.new
@@ -46,13 +47,6 @@ class BlogsController < ApplicationController
 
   def set_my_blog
     @blog = current_user.blogs.find(params[:id])
-  end
-
-  def set_permitted_blog
-    @blog = Blog.find(params[:id])
-    return unless @blog.secret
-    raise ActiveRecord::RecordNotFound, "Couldn't find Blog with 'id'=#{@blog.id}" if !user_signed_in?
-    raise ActiveRecord::RecordNotFound, "Couldn't find Blog with 'id'=#{@blog.id}" unless @blog.user == current_user
   end
 
   def blog_params
