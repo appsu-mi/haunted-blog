@@ -19,10 +19,6 @@ class Blog < ApplicationRecord
     user == target_user
   end
 
-  def filter_premium(params)
-    user.premium? ? params : params.delete_if { |key, _value| key == 'random_eyecatch' }
-  end
-
   def confirm_browsable(current_user)
     if secret
       return current_user.blogs.find(id) if current_user
