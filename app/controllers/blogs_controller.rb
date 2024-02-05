@@ -2,8 +2,6 @@
 
 class BlogsController < ApplicationController
   skip_before_action :authenticate_user!, only: %i[index show]
-
-  before_action :validate_permission, only: %i[update create]
   before_action :set_my_blog, only: %i[edit update destroy]
 
   def index
@@ -51,11 +49,7 @@ class BlogsController < ApplicationController
   end
 
   def blog_params
-    params.require(:blog).permit(:title, :content, :secret, :random_eyecatch)
-  end
-
-  def validate_permission
-    blog = Blog.new(blog_params)
-    redirect_to blogs_url if !current_user.premium? && blog.random_eyecatch
+    filtered_params = !current_user.premium? ? params.require(:blog).reject { |key, _value| key == 'random_eyecatch' } : params.require(:blog)
+    filtered_params.permit(:title, :content, :secret, :random_eyecatch)
   end
 end
