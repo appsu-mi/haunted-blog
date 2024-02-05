@@ -15,17 +15,9 @@ class Blog < ApplicationRecord
 
   scope :default_order, -> { order(id: :desc) }
 
+  scope :browsable, ->(user) { where(user:).or(where(secret: false)) }
+
   def owned_by?(target_user)
     user == target_user
-  end
-
-  def confirm_browsable(current_user)
-    if secret
-      return current_user.blogs.find(id) if current_user
-
-      Blog.published.find(id) unless current_user
-    else
-      self
-    end
   end
 end

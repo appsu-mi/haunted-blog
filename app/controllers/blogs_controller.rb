@@ -11,7 +11,7 @@ class BlogsController < ApplicationController
   end
 
   def show
-    @blog = Blog.find(params[:id]).confirm_browsable(current_user)
+    @blog = Blog.browsable(current_user).find(params[:id])
   end
 
   def new
