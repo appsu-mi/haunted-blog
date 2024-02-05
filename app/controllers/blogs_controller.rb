@@ -49,7 +49,9 @@ class BlogsController < ApplicationController
   end
 
   def blog_params
-    filtered_params = !current_user.premium? ? params.require(:blog).reject { |key, _value| key == 'random_eyecatch' } : params.require(:blog)
-    filtered_params.permit(:title, :content, :secret, :random_eyecatch)
+    properties = %i[title content secret]
+    properties << :random_eyecatch if current_user.premium?
+
+    params.require(:blog).permit(*properties)
   end
 end
